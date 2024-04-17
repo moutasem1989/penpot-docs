@@ -205,9 +205,9 @@ debug.debug_all()
 debug.debug_none()
 ```
 
-## Translations (I18N) ##
+## Translations (I18N)
 
-### How it works ###
+### How it works
 
 All the translation strings of this application are stored in
 standard *gettext* files in `frontend/translations/*.po`.
@@ -250,7 +250,7 @@ frontend/src/app/util/i18n.cljs (supported-locales)
 frontend/gulpfile.js (const langs)
 ```
 
-### How to use it ###
+### How to use it
 
 You need to use the `app.util.i18n/tr` function for lookup translation
 strings:
@@ -300,7 +300,7 @@ msgstr[1] "%s projects"
 ;; => "1 project"
 ```
 
-## Tests ##
+## Tests
 
 Frontend tests have to be compiled first, and then run with node.
 
@@ -313,3 +313,36 @@ Or run the watch (that automatically runs the test):
 ```bash
 npx shadow-cljs watch tests
 ```
+
+### Testing best practices
+Our best practices are based on [Testing library documentation](https://testing-library.com/docs/). For our integration tests we use Playwright, you can find more info [here](https://playwright.dev/docs/intro).
+
+This is a summary of the most important points to take into account:
+
+#### Query priority
+Queries are the methods to find elements on the page.
+Your test should simulate as closely as possible the way users interact with the application.
+Depending on the content of the page and the element to be selected, we will choose one method or the other following these priorities:
+
+- **Queries Accessible to Everyone** -> Queries that simulate the experience of visual users or use assistive technologies.
+
+    1. [page.getByRole](https://playwright.dev/docs/locators#locate-by-role): This selector allows us to locate exposed elements in the [accessibility tree](https://developer.mozilla.org/en-US/docs/Glossary/Accessibility_tree).
+
+    2. [page.getByLabel](https://playwright.dev/docs/locators#locate-by-label): If we need to query for form fields this is a good way.
+
+    3. [page.getByPlaceholder](https://playwright.dev/docs/locators#locate-by-placeholder): If your form field does not have a label you can use this locator.
+
+    4. [page.getByText](https://playwright.dev/docs/locators#locate-by-text): Use this selector to located non-interactionable elements such as div p, or span by its text content.
+
+
+- **Semantic Queries** -> These selectors comply with HTML5 and ARIA standards. However, it's important to note that the user experience when interacting with these attributes may differ significantly depending on the browser and assistive technology being used.
+
+    1. [page.byAltText](https://playwright.dev/docs/locators#locate-by-alt-text): If your element is one which supports alt text (img, area, input, and any custom element), then you can use this to find that element.
+
+    2. [page.byTitle](https://playwright.dev/docs/locators#locate-by-title): The title attribute is not consistently read by screen readers, and is not visible by default for sighted users.
+
+- **Test IDs** -> Finally, if none of the previous options is possible, we can choose to locate the element by its TestId. We must keep in mind that this type of locator is not user-oriented.
+
+    1. [page.getByTestId](https://playwright.dev/docs/locators#locate-by-test-id): Use this method if you can not locate by role or text.
+
+
