@@ -159,7 +159,7 @@ PENPOT_OIDC_CLIENT_ID=<client-id>
 
 # Mainly used for auto discovery the openid endpoints
 PENPOT_OIDC_BASE_URI=<uri>
-PENPOT_OIDC_CLIENT_SECRET=<client-id>
+PENPOT_OIDC_CLIENT_SECRET=<client-secret>
 
 # Optional backend variables, used mainly if you want override; they are
 # autodiscovered using the standard openid-connect mechanism.
